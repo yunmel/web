@@ -26,28 +26,23 @@ import com.google.common.collect.Lists;
 import com.yunmel.commons.model.HttpResult;
 
 @Service
-public class ApiService
-{
+public class ApiService {
   @Autowired(required = false)
   private CloseableHttpClient httpclient;
 
   @Autowired(required = false)
   private RequestConfig requestConfig;
 
-  public String doGet(String url) throws URISyntaxException, ClientProtocolException, IOException
-  {
+  public String doGet(String url) throws URISyntaxException, ClientProtocolException, IOException {
     return doGet(url, null);
   }
 
   public String doGet(String url, Map<String, Object> params)
-      throws URISyntaxException, ClientProtocolException, IOException
-  {
+      throws URISyntaxException, ClientProtocolException, IOException {
     URI uri = null;
-    if (params != null)
-    {
+    if (params != null) {
       URIBuilder builder = new URIBuilder(url);
-      for (Map.Entry<String, Object> entry : params.entrySet())
-      {
+      for (Map.Entry<String, Object> entry : params.entrySet()) {
         builder.addParameter(entry.getKey(), (String) entry.getValue());
       }
       uri = builder.build();
@@ -56,28 +51,22 @@ public class ApiService
     HttpGet httpGet = null;
     if (uri != null)
       httpGet = new HttpGet(uri);
-    else
-    {
+    else {
       httpGet = new HttpGet(url);
     }
 
     httpGet.setConfig(this.requestConfig);
 
     CloseableHttpResponse response = null;
-    try
-    {
+    try {
       response = this.httpclient.execute(httpGet);
 
-      if (response.getStatusLine().getStatusCode() == 200)
-      {
+      if (response.getStatusLine().getStatusCode() == 200) {
         String str = EntityUtils.toString(response.getEntity(), "UTF-8");
         return str;
       }
-    }
-    finally
-    {
-      if (response != null)
-      {
+    } finally {
+      if (response != null) {
         response.close();
       }
     }
@@ -85,64 +74,52 @@ public class ApiService
   }
 
   public HttpResult doPost(String url, Map<String, Object> params)
-      throws ClientProtocolException, IOException
-  {
+      throws ClientProtocolException, IOException {
     HttpPost httpPost = new HttpPost(url);
     httpPost.setConfig(this.requestConfig);
-    if (params != null)
-    {
+    if (params != null) {
       List<NameValuePair> parameters = Lists.newArrayList();
-      for (Map.Entry<String, Object> entry : params.entrySet())
-      {
+      for (Map.Entry<String, Object> entry : params.entrySet()) {
         parameters.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
       }
       UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(parameters, "UTF-8");
       httpPost.setEntity(urlEncodedFormEntity);
     }
     CloseableHttpResponse response = null;
-    try
-    {
+    try {
       response = this.httpclient.execute(httpPost);
       HttpResult httpResult = new HttpResult();
       httpResult.setCode(response.getStatusLine().getStatusCode());
 
-      if (response.getStatusLine().getStatusCode() == 200)
-      {
+      if (response.getStatusLine().getStatusCode() == 200) {
         httpResult.setContent(EntityUtils.toString(response.getEntity(), "UTF-8"));
       }
       return httpResult;
-    }
-    finally
-    {
+    } finally {
       if (response != null)
         response.close();
     }
   }
 
-  public HttpResult doPostJson(String url, String json) throws ClientProtocolException, IOException
-  {
+  public HttpResult doPostJson(String url, String json)
+      throws ClientProtocolException, IOException {
     HttpPost httpPost = new HttpPost(url);
     httpPost.setConfig(this.requestConfig);
-    if (json != null)
-    {
+    if (json != null) {
       StringEntity stringEntity = new StringEntity(json, ContentType.APPLICATION_JSON);
       httpPost.setEntity(stringEntity);
     }
     CloseableHttpResponse response = null;
-    try
-    {
+    try {
       response = this.httpclient.execute(httpPost);
       HttpResult httpResult = new HttpResult();
       httpResult.setCode(Integer.valueOf(response.getStatusLine().getStatusCode()));
 
-      if (response.getStatusLine().getStatusCode() == 200)
-      {
+      if (response.getStatusLine().getStatusCode() == 200) {
         httpResult.setContent(EntityUtils.toString(response.getEntity(), "UTF-8"));
       }
       return httpResult;
-    }
-    finally
-    {
+    } finally {
       if (response != null)
         response.close();
     }

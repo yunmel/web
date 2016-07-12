@@ -17,16 +17,13 @@ import tk.mybatis.mapper.mapperhelper.EntityHelper;
 import tk.mybatis.mapper.mapperhelper.MapperHelper;
 import tk.mybatis.mapper.mapperhelper.MapperTemplate;
 
-public class BaseMapperProvider extends MapperTemplate
-{
+public class BaseMapperProvider extends MapperTemplate {
 
-  public BaseMapperProvider(Class<?> mapperClass, MapperHelper mapperHelper)
-  {
+  public BaseMapperProvider(Class<?> mapperClass, MapperHelper mapperHelper) {
     super(mapperClass, mapperHelper);
   }
 
-  public SqlNode beforeDeleteTreeStructureSql(MappedStatement ms)
-  {
+  public SqlNode beforeDeleteTreeStructureSql(MappedStatement ms) {
     // 修改返回值类型为实体类型
     setResultType(ms, Integer.class);
     List<SqlNode> sqlNodes = new ArrayList<SqlNode>();
@@ -37,14 +34,12 @@ public class BaseMapperProvider extends MapperTemplate
     return new MixedSqlNode(sqlNodes);
   }
 
-  public SqlNode deleteByIDS(MappedStatement ms)
-  {
+  public SqlNode deleteByIDS(MappedStatement ms) {
     Class<?> entityClass = getEntityClass(ms);
     Set<EntityColumn> entityColumns = EntityHelper.getPKColumns(entityClass);
     EntityColumn entityColumn = null;
     Iterator<EntityColumn> it = entityColumns.iterator();
-    if (it.hasNext())
-    {
+    if (it.hasNext()) {
       entityColumn = it.next();
     }
     EntityColumn column = entityColumn;

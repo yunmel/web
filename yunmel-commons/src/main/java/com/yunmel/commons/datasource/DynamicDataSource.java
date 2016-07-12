@@ -16,10 +16,9 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
  * 继承{@link org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource}
  * 配置主从数据源后，根据选择，返回对应的数据源。多个从库的情况下，会平均的分配从库，用于负载均衡。
  *
- * @author tanghd
+ * @author
  */
-public class DynamicDataSource extends AbstractRoutingDataSource
-{
+public class DynamicDataSource extends AbstractRoutingDataSource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDataSource.class);
 
@@ -35,10 +34,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource
 
   private static final ThreadLocal<LinkedList<String>> datasourceHolder =
       new ThreadLocal<LinkedList<String>>() {
-
         @Override
-        protected LinkedList<String> initialValue()
-        {
+        protected LinkedList<String> initialValue() {
           return new LinkedList<String>();
         }
 
@@ -48,17 +45,13 @@ public class DynamicDataSource extends AbstractRoutingDataSource
    * 初始化
    */
   @Override
-  public void afterPropertiesSet()
-  {
-    if (null == master)
-    {
+  public void afterPropertiesSet() {
+    if (null == master) {
       throw new IllegalArgumentException("Property 'master' is required");
     }
     dataSources.put(DEFAULT, master);
-    if (null != slaves && slaves.size() > 0)
-    {
-      for (int i = 0; i < slaves.size(); i++)
-      {
+    if (null != slaves && slaves.size() > 0) {
+      for (int i = 0; i < slaves.size(); i++) {
         dataSources.put(SLAVE + (i + 1), slaves.get(i));
       }
       slaveSize = slaves.size();
@@ -71,10 +64,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource
   /**
    * 选择使用主库，并把选择放到当前ThreadLocal的栈顶
    */
-  public static void useMaster()
-  {
-    if (LOGGER.isDebugEnabled())
-    {
+  public static void useMaster() {
+    if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("use datasource :" + datasourceHolder.get());
     }
     LinkedList<String> m = datasourceHolder.get();
@@ -84,10 +75,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource
   /**
    * 选择使用从库，并把选择放到当前ThreadLocal的栈顶
    */
-  public static void useSlave()
-  {
-    if (LOGGER.isDebugEnabled())
-    {
+  public static void useSlave() {
+    if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("use datasource :" + datasourceHolder.get());
     }
     LinkedList<String> m = datasourceHolder.get();
@@ -97,15 +86,12 @@ public class DynamicDataSource extends AbstractRoutingDataSource
   /**
    * 重置当前栈
    */
-  public static void reset()
-  {
+  public static void reset() {
     LinkedList<String> m = datasourceHolder.get();
-    if (LOGGER.isDebugEnabled())
-    {
+    if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("reset datasource {}", m);
     }
-    if (m.size() > 0)
-    {
+    if (m.size() > 0) {
       m.poll();
     }
   }
@@ -114,58 +100,43 @@ public class DynamicDataSource extends AbstractRoutingDataSource
    * 如果是选择使用从库，且从库的数量大于1，则通过取模来控制从库的负载, 计算结果返回AbstractRoutingDataSource
    */
   @Override
-  protected Object determineCurrentLookupKey()
-  {
+  protected Object determineCurrentLookupKey() {
     LinkedList<String> m = datasourceHolder.get();
     String key = m.peekFirst() == null ? DEFAULT : m.peekFirst();
-    if (LOGGER.isDebugEnabled())
-    {
+    if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("currenty datasource :" + key);
     }
-    if (null != key)
-    {
-      if (DEFAULT.equals(key))
-      {
+    if (null != key) {
+      if (DEFAULT.equals(key)) {
         return key;
-      }
-      else if (SLAVE.equals(key))
-      {
-        if (slaveSize > 1)
-        {// Slave loadBalance
+      } else if (SLAVE.equals(key)) {
+        if (slaveSize > 1) {// Slave loadBalance
           long c = slaveCount.incrementAndGet();
           c = c % slaveSize;
           return SLAVE + (c + 1);
-        }
-        else
-        {
+        } else {
           return SLAVE + "1";
         }
       }
       return null;
-    }
-    else
-    {
+    } else {
       return null;
     }
   }
 
-  public DataSource getMaster()
-  {
+  public DataSource getMaster() {
     return master;
   }
 
-  public List<DataSource> getSlaves()
-  {
+  public List<DataSource> getSlaves() {
     return slaves;
   }
 
-  public void setMaster(DataSource master)
-  {
+  public void setMaster(DataSource master) {
     this.master = master;
   }
 
-  public void setSlaves(List<DataSource> slaves)
-  {
+  public void setSlaves(List<DataSource> slaves) {
     this.slaves = slaves;
   }
 
