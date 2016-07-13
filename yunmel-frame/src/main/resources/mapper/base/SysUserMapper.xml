@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunmel.frame.sys.mapper.SysUserMapper">
+
+	<sql id="sysUserColumns">
+		ID,UNIT_ID,USERNAME,PASSWORD,NAME,SEX,EMAIL,PHONE,MOBILE,USER_TYPE,LOGIN_IP,LOGIN_DATE,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,REMARKS,DEL_FLAG,STATUS,LAST_LOGIN_DATE,LAST_LOGIN_IP,LAST_LOGIN_ERROR_MSG,ERROR_COUNT,NEXT_LOGIN_DATE,NEXT_MOD_PWD_DATE,HX_UID,AVATAR
+	</sql>
+
+	<sql id="aliasSysUserColumns">
+		su.ID,su.UNIT_ID,su.USERNAME,su.PASSWORD,su.NAME,su.SEX,su.EMAIL,su.PHONE,su.MOBILE,su.USER_TYPE,su.LOGIN_IP,su.LOGIN_DATE,su.CREATE_BY,su.CREATE_DATE,su.UPDATE_BY,su.UPDATE_DATE,su.REMARKS,su.DEL_FLAG,su.STATUS,su.LAST_LOGIN_DATE,su.LAST_LOGIN_IP,su.LAST_LOGIN_ERROR_MSG,su.ERROR_COUNT,su.NEXT_LOGIN_DATE,su.NEXT_MOD_PWD_DATE,su.HX_UID,su.AVATAR
+	</sql>
+
+	
+	<!-- 用户列表 -->
+	<select id="findPageInfo" resultType="com.yunmel.frame.sys.model.SysUser">
+		SELECT <include refid="aliasSysUserColumns" />,so.name as officeName,GROUP_CONCAT(sr.name SEPARATOR ' | ') roles 
+		FROM sys_user su 
+		LEFT JOIN sys_user_role sur ON su.id = sur.user_id 
+		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+		LEFT JOIN sys_office so ON so.id = su.unit_id
+		<where>
+			<if test="unitId != null and unitId !='' ">
+			    and su.UNIT_ID like CONCAT( '%' , #{unitId}, '%') 
+			</if>
+			<if test="username != null and username !='' ">
+			    and su.USERNAME like CONCAT( '%' , #{username}, '%') 
+			</if>
+			<if test="password != null and password !='' ">
+			    and su.PASSWORD like CONCAT( '%' , #{password}, '%') 
+			</if>
+			<if test="name != null and name !='' ">
+			    and su.NAME like CONCAT( '%' , #{name}, '%') 
+			</if>
+			<if test="sex != null and sex !='' ">
+			    and su.SEX like CONCAT( '%' , #{sex}, '%') 
+			</if>
+			<if test="email != null and email !='' ">
+			    and su.EMAIL like CONCAT( '%' , #{email}, '%') 
+			</if>
+			<if test="phone != null and phone !='' ">
+			    and su.PHONE like CONCAT( '%' , #{phone}, '%') 
+			</if>
+			<if test="mobile != null and mobile !='' ">
+			    and su.MOBILE like CONCAT( '%' , #{mobile}, '%') 
+			</if>
+			<if test="userType != null and userType !='' ">
+			    and su.USER_TYPE like CONCAT( '%' , #{userType}, '%') 
+			</if>
+			<if test="loginIp != null and loginIp !='' ">
+			    and su.LOGIN_IP like CONCAT( '%' , #{loginIp}, '%') 
+			</if>
+			<if test="loginDate != null and loginDate !='' ">
+			    and su.LOGIN_DATE =  #{loginDate}
+			</if>
+			<if test="createBy != null and createBy !='' ">
+			    and su.CREATE_BY like CONCAT( '%' , #{createBy}, '%') 
+			</if>
+			<if test="createDate != null and createDate !='' ">
+			    and su.CREATE_DATE =  #{createDate}
+			</if>
+			<if test="updateBy != null and updateBy !='' ">
+			    and su.UPDATE_BY like CONCAT( '%' , #{updateBy}, '%') 
+			</if>
+			<if test="updateDate != null and updateDate !='' ">
+			    and su.UPDATE_DATE =  #{updateDate}
+			</if>
+			<if test="remarks != null and remarks !='' ">
+			    and su.REMARKS like CONCAT( '%' , #{remarks}, '%') 
+			</if>
+			<if test="status != null and status !='' ">
+			    and su.STATUS =  #{status}
+			</if>
+			<if test="lastLoginDate != null and lastLoginDate !='' ">
+			    and su.LAST_LOGIN_DATE =  #{lastLoginDate}
+			</if>
+			<if test="lastLoginIp != null and lastLoginIp !='' ">
+			    and su.LAST_LOGIN_IP like CONCAT( '%' , #{lastLoginIp}, '%') 
+			</if>
+			<if test="lastLoginErrorMsg != null and lastLoginErrorMsg !='' ">
+			    and su.LAST_LOGIN_ERROR_MSG like CONCAT( '%' , #{lastLoginErrorMsg}, '%') 
+			</if>
+			<if test="errorCount != null and errorCount !='' ">
+			    and su.ERROR_COUNT =  #{errorCount}
+			</if>
+			<if test="nextLoginDate != null and nextLoginDate !='' ">
+			    and su.NEXT_LOGIN_DATE =  #{nextLoginDate}
+			</if>
+			<if test="nextModPwdDate != null and nextModPwdDate !='' ">
+			    and su.NEXT_MOD_PWD_DATE =  #{nextModPwdDate}
+			</if>
+			<if test="hxUid != null and hxUid !='' ">
+			    and su.HX_UID like CONCAT( '%' , #{hxUid}, '%') 
+			</if>
+			<if test="avatar != null and avatar !='' ">
+			    and su.AVATAR like CONCAT( '%' , #{avatar}, '%') 
+			</if>
+		</where>
+		GROUP BY su.id ORDER BY su.update_date desc
+	</select>
+	<!-- <select id="findByParams" resultType="com.yunmel.frame.sys.model.SysUser">
+		SELECT su.*,so.name as officeName from sys_user su
+		left join sys_office so on su.unit_id = so.id
+		<where>
+			su.del_flag =0  and su.unit_id = so.id 
+			<if test="null != unitId and '' != unitId">
+				and su.unit_id = ${unitId}
+			</if>
+			<if test="id!=0 and id=='' ">
+				and su.id = ${id}
+			</if>
+			<if test="null != name and '' != name">
+				and su.name like concat('%', #{name} ,'%')
+			</if>
+			<if test="sex != null and sex !='' ">
+			    and t1.SEX like CONCAT( '%' , #{sex}, '%') 
+			</if>
+			<if test="null != roles and '' != roles">
+				and FIND_IN_SET(sr.id,#{roles})
+			</if>
+			<if test="null != userDataScope and '' != userDataScope">
+				and ${userDataScope}
+			</if>
+		</where>
+		GROUP BY su.id ORDER BY su.update_date desc
+	</select> -->
+	
+	<select id="findSysUserIdByLoginName" resultType="java.lang.Long">
+		select r.id from sys_user r
+		<where>
+			r.username = #{loginName}
+			and r.del_flag = 0
+		</where>
+	</select>
+	
+	<select id="findAllUser" resultType="com.yunmel.frame.sys.model.SysUser">
+		SELECT * from sys_user su where su.del_flag =0
+	</select>
+	
+	<select id="findUserByStatus" resultType="com.yunmel.frame.sys.model.SysUser">
+		SELECT * from sys_user su where su.del_flag =0 and su.status = #{status}
+	</select>
+	
+	<select id="getUserByUsername" resultType="com.yunmel.frame.sys.model.SysUser">
+		select u.*,o.name as uname from sys_user u, sys_office o where u.username = #{username} and o.id = u.unit_id
+	</select>
+	
+</mapper>

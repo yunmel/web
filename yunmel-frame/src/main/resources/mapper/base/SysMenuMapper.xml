@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunmel.frame.sys.mapper.SysMenuMapper">
+
+	<sql id="sysMenuColumns">
+		id,common,description,icon,name,parent_id,sort,status,type,url,parent_ids,
+		update_by,update_date,create_by,create_date,del_flag,module
+	</sql>
+
+	<sql id="AliasColumns">
+		sr.id,sr.description,sr.icon,sr.name,sr.parent_id,sr.sort,
+		sr.status,sr.type,sr.url,sr.common,sr.parent_ids,sr.del_flag,sr.module
+	</sql>
+	
+	<!-- 修改父节点字符串 -->
+	<update id="updateParentIds">
+		update sys_menu
+		set parent_ids = REPLACE(parent_ids, #{oldParentIds}, #{parentIds}) 
+		where parent_ids like CONCAT( '%,' , #{id} , ',%' ) 
+	</update>
+	
+	
+	<!-- 更新 -->
+	<update id="updateStatusByRootId">
+		update sys_menu
+		set status = #{status}
+		where 
+		 FIND_IN_SET(#{id},parent_ids) or id = #{id}
+	</update>
+	
+
+	<!-- 根据节点Id删除底下全部子节点包括孙子节点 -->
+	<delete id="deleteIdsByRootId">
+		delete from sys_menu where FIND_IN_SET(#{id},parent_ids) or id = #{id}
+	</delete>
+	
+	<!-- 删除资源前验证 -->
+	<select id="beforeDeleteMenu" resultType="java.lang.Integer">
+		select count(1) from sys_role_menu where menu_id = #{resourceId}
+	</select>
+	
+	<!-- 根据用户id获得持有的资源 -->
+	<select id="findUserMenuByUserId" resultType="com.yunmel.frame.sys.model.SysMenu">
+		SELECT DISTINCT res.id,res.url,res.type,res.parent_id,
+			   res.parent_ids,res.name,res.icon,res.sort
+		FROM sys_menu res 
+			LEFT JOIN sys_role_menu srr ON res.id=srr.menu_id
+			LEFT JOIN sys_user_role ur ON ur.role_id=srr.role_id
+		WHERE ur.user_id=#{userId} AND res.del_flag=0 AND res.status=1
+		order by res.sort  asc
+	</select>
+	
+	<!-- 菜单管理分页显示筛选查询 -->
+	<select id="findPageInfo" resultType="com.yunmel.frame.sys.model.SysMenu">
+		select sr.id,sr.description,sr.icon,sr.name,sr.sort,sr.common,
+		sr.status,sr.type,sr.url,srp.name pname,srp.id pid
+		from sys_menu sr
+		left join sys_menu srp
+		ON sr.parent_id=srp.id
+		<where>
+		    sr.del_flag = 0
+			<if test="null != name and '' != name">
+				and sr.name like concat( '%' , #{name} , '%' )
+			</if>
+			<if test="null != id and '' != id and null != name and '' != name"> 
+				and FIND_IN_SET(#{id},sr.parent_ids) or sr.id = #{id}
+			</if>
+		</where>
+		ORDER BY sr.update_date desc 
+	</select>
+
+</mapper>

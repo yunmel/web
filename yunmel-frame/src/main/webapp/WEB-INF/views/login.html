@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${appConf.get('LOGIN_SHOW_NAME')}</title>
+    <link href="${ctxPath}/static/css/bootstrap.min.css"  rel="stylesheet">
+    <link href="${ctxPath}/static/css/font-awesome.min.css"  rel="stylesheet">
+    <link href="${ctxPath}/static/login/css/style.css"  rel="stylesheet">
+	
+	
+	<!--[if lte IE 8]>
+		<script src="${ctxPath!}/static/js/plugins/bootstrap-ext/html5shiv.min.js"></script>
+		<script src="${ctxPath!}/static/js/plugins/bootstrap-ext/respond.min.js"></script>
+		<script>var ie8 = "ie8";</script>
+	<![endif]-->
+
+    <!--[if lt IE 9]>
+	<p class="chromeframe alert btn-danger">您的浏览器需要更新。该浏览器有诸多安全漏洞，无法显示本系统的所有功能。我们强烈建议您<a href="http://browsehappy.com">升级浏览器</a>，或<a href="http://dlsw.baidu.com/sw-search-sp/soft/9d/14744/ChromeStandalone_47.0.2526.106_Setup.1450323126.exe">安装 Google Chrome 浏览器内嵌框架</a>。</p>
+	<![endif]-->
+	
+	
+	<!--[if !IE]> -->
+	<script src="${ctxPath}/static/js/jquery-2.1.1.js"></script>
+	<!-- <![endif]-->
+	
+	<!--[if IE]>
+	<script src="${ctxPath!}/static/js/jquery-1.11.1.min.js"/>
+	<![endif]-->
+		
+    <script src="${ctxPath}/static/js/plugins/pace/pace.min.js" ></script>
+</head>
+
+<body>
+	<div id="container" class="cls-container">
+		
+		<div id="bg-overlay" class="bg-img img-balloon"></div>
+		
+		<div class="cls-header cls-header-lg">
+			<div class="cls-brand">
+				<a class="box-inline" >
+					<span class="brand-title">${appConf.get('LOGIN_SHOW_NAME')}</span>
+				</a>
+			</div>
+		</div>
+		
+		<div class="cls-content">
+			<div class="cls-content-sm panel">
+				<div class="panel-body">
+					<p class="pad-btm">用户登录</p>
+					<form action="">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-user"></i></div>
+								<input type="text" class="form-control" name="username" value="admin" id="username" placeholder="用户名">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+								<input type="password" name="password" value="admin" id="password" class="form-control" placeholder="密码">
+							</div>
+						</div>
+						@if(appConf.get("LOGIN_CAPTCHA_ON") == "1"){
+						<div class="form-group">
+							<div id="slider">
+						        <div id="slider_bg"></div>
+						        <span id="label">>></span>
+						        <span id="labelTip">请按住滑块，拖动到最右边</span>
+						    </div>
+						</div>
+						@}
+						<div class="mar-btm"></div>
+						<button class="btn btn-primary btn-lg btn-block disabled"  disabled id="login-btn"  type="button">
+							<span>登录</span>
+						</button>
+					</form>
+				</div>
+			</div>
+			<div class="pad-ver">
+				
+			</div>
+		</div>
+
+		<div class="yunmel-bg">
+			<div id="yunmel-bg-list">
+				<div class="yunmel-loading"><i class="fa fa-refresh"></i></div>
+				<img class="yunmel-chg-bg bg-trans" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-trns.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-trns.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-1.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-1.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg active" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-2.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-2.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-3.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-3.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-4.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-4.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-5.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-5.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-6.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-6.jpg" alt="Background Image">
+				<img class="yunmel-chg-bg" src="${ctxPath}/static/login/img/bg-img/thumbs/bg-img-7.jpg" tppabs="http://www.themeon.net/nifty/v2.3/img/bg-img/thumbs/bg-img-7.jpg" alt="Background Image">
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var ctxPath = '${ctxPath}';
+		@if(appConf.get("LOGIN_CAPTCHA_ON") == "1"){
+			var locked = true;
+		@}else{
+			var locked = false;
+			$("#login-btn").removeClass("disabled").removeAttr("disabled");
+		@}
+	</script>
+    <script src="${ctxPath}/static/js/jquery-2.1.1.js"></script>
+    <script src="${ctxPath}/static/js/bootstrap.min.js" ></script>
+    <script src="${ctxPath}/static/js/plugins/fast-click/fastclick.min.js"></script>
+    <script src="${ctxPath}/static/login/js/login.js"></script>
+</body>
+</html>

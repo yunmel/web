@@ -1,0 +1,25 @@
+@for(menu in para0){
+	<li 
+	@if(menu.hasChild){
+	class="treeview"
+	@}
+	>
+	<a></a>
+	<i class="fa ${menu.icon!'fa-caret-right'}"></i>
+	@if(menu.hasChild){
+		<span>${menu.name!}</span>
+	@}else{
+		${menu.name!}
+	@}
+	@if(menu.hasChild){
+	<span class="pull-right-container">
+      <i class="fa fa-angle-left pull-right"></i>
+    </span>
+    @if(!isEmpty(menu.children)){
+    <ul class="treeview-menu">
+	  	@menuTree(menu.children!);
+	 </ul>
+    @}
+	@}
+	</li>
+@}elsefor{}

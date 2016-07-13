@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AdminLTE 2 | Fixed Layout</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  @layout("/layout/base.html"){}
+</head>
+<body class="hold-transition skin-blue fixed sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">  
+	 @layout("/layout/header.html"){}
+	 @layout("/layout/left-sidebar.html"){}
+	  <!-- Content Wrapper. Contains page content -->
+  	 <div class="content-wrapper" id="content-wrapper">
+  	  @layout("/layout/content.html"){}
+  	 </div>
+	 @layout("/layout/footer.html"){}
+	 @layout("/layout/right-sidebar.html"){}
+	 <div class="control-sidebar-bg"></div>
+</div>
+
+<!-- jQuery 2.2.3 -->
+<script src="${ctxPath}/static/plugins/jQuery/jquery-2.2.4.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="${ctxPath}/static/bootstrap/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="${ctxPath}/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="${ctxPath}/static/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="${ctxPath}/static/dist/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+ <script src="${ctxPath}/static/dist/js/demo.js"></script>
+ <script src="${ctxPath}/static/js/history.js"></script>
+ <script src="${ctxPath}/static/js/main.js"></script>
+</body>
+</html>
