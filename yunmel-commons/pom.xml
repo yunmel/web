@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>com.yunmel.commons</groupId>
 	<artifactId>yunmel-commons</artifactId>
-	<version>0.0.13-SNAPSHOT</version>
+	<version>0.0.14-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -102,6 +102,18 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
