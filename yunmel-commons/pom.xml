@@ -7,8 +7,8 @@
 		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 	<groupId>com.yunmel.commons</groupId>
-	<artifactId>yunmel-commons</artifactId>
-	<version>0.0.14-SNAPSHOT</version>
+	<artifactId>yunmel-commons</artifactId> 
+	<version>0.0.17-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>

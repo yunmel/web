@@ -1,6 +1,5 @@
 package com.yunmel.commons.service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,22 +7,31 @@ import java.util.Map;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yunmel.commons.component.SpringUtils;
+import com.yunmel.commons.interfac.IShiroUser;
 import com.yunmel.commons.mapper.BaseMapper;
 import com.yunmel.commons.model.BaseEntity;
 import com.yunmel.commons.utils.Globle;
 import com.yunmel.commons.utils.RandomUtils;
 import com.yunmel.commons.utils.StrUtils;
-import com.yunmel.commons.utils.ThreadLocalUtils;
 
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
+/**
+ * 基本service
+ * @author xuyq
+ *
+ * @param <T>
+ */
 public abstract class BaseService<T extends BaseEntity> {
   @Autowired
   private BaseMapper<T> baseMapper;
@@ -76,15 +84,12 @@ public abstract class BaseService<T extends BaseEntity> {
    * @param <T extend T>
    */
   public int insert(T record) {
-    if (record.containsKey("createDate")) {
-      record.set("createDate", System.currentTimeMillis());
+    if (StringUtils.isBlank(record.getString("createBy"))) {
+      record.set("createBy", getCurrentUserName());
     }
-    if (record.containsKey("updateDate")) {
-      record.set("updateDate", System.currentTimeMillis());
-    }
-    if (record.containsKey("delFlag")) {
-      record.set("delFlag", Globle.DEL_FLAG_NORMAL);
-    }
+    record.set("createDate", System.currentTimeMillis());
+    record.set("updateDate", System.currentTimeMillis());
+    record.set("delFlag", Globle.DEL_FLAG_NORMAL);
     record.setId(RandomUtils.genRandom32Hex());
     return baseMapper.insert(record);
   }
@@ -97,8 +102,7 @@ public abstract class BaseService<T extends BaseEntity> {
    */
   public int insertSelective(T record) {
     if (StringUtils.isBlank(record.getString("createBy"))) {
-      String user = (String) ThreadLocalUtils.get("user");
-      record.set("createBy", user);
+      record.set("createBy", getCurrentUserName());
     }
     record.set("createDate", System.currentTimeMillis());
     record.set("updateDate", System.currentTimeMillis());
@@ -131,12 +135,10 @@ public abstract class BaseService<T extends BaseEntity> {
    * @param <T extend T>
    */
   public int updateByPrimaryKey(T record) {
-    // SysUser sysUser = SysUserUtils.getCacheLoginUser();
-    // if(sysUser != null){
-    // record.set("updateBy",sysUser.getId()+","+
-    // SysUserUtils.getCacheLoginUser().getName());
-    // }
-    record.set("updateDate", new Date());
+    if (StringUtils.isBlank(record.getString("updateBy"))) {
+      record.set("updateBy", getCurrentUserName());
+    }
+    record.set("updateDate", System.currentTimeMillis());
     return baseMapper.updateByPrimaryKey(record);
   }
 
@@ -146,9 +148,9 @@ public abstract class BaseService<T extends BaseEntity> {
    * @param <T extend T>
    */
   public int updateByPrimaryKeySelective(T record) {
-    // SysUser user = SysUserUtils.getCacheLoginUser();
-    String user = (String) ThreadLocalUtils.get("user");
-    record.set("updateBy", user);
+    if (StringUtils.isBlank(record.getString("updateBy"))) {
+      record.set("updateBy", getCurrentUserName());
+    }
     record.set("updateDate", System.currentTimeMillis());
     return baseMapper.updateByPrimaryKeySelective(record);
   }
@@ -311,9 +313,6 @@ public abstract class BaseService<T extends BaseEntity> {
     } catch (IllegalAccessException e) {
       e.printStackTrace();
     }
-    if (id != null) {
-      m.set("id", id);
-    }
     m.set(checkField, value);
     if (params != null) {
       m.setAll(params);
@@ -348,6 +347,20 @@ public abstract class BaseService<T extends BaseEntity> {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("status", Globle.SYSTEM_COMMON_ENABLE);
     return this.unique(bean, checkField, value, id, params);
+  }
+
+  /**
+   * 获取当前用户名
+   * 
+   * @return
+   */
+  protected String getCurrentUserName() {
+    Subject su = SecurityUtils.getSubject();
+    PrincipalCollection collection = su.getPrincipals();
+    if(null != collection){
+      return collection.getPrimaryPrincipal().toString();
+    }
+    return "";
   }
 
 }
